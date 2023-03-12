@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour, IKitchenObjectParent {
 
     public static Player Instance { get; private set; }
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
@@ -16,10 +16,16 @@ public class Player : MonoBehaviour {
     private GameInput gameInput;
     [SerializeField]
     private LayerMask counterLayerMask;
+
+    [SerializeField]
+    private Transform kitchenObjectPoint;
+
+
     private bool isWalking;
     private Vector3 lastInteractDir;
 
     private ClearCounter selectedCounter;
+    private KitchenObjects kitchenObject;
     private void Awake() {
         if (Instance != null)
             Debug.LogError("This should not happen in this single-player game");
@@ -31,7 +37,7 @@ public class Player : MonoBehaviour {
 
     private void GameInput_OnInteraction(object sender, EventArgs e) {
         if(selectedCounter != null) {
-            selectedCounter.Interact();
+            selectedCounter.Interact(this);
         }
     }
 
@@ -92,4 +98,19 @@ public class Player : MonoBehaviour {
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs { selectedCounter = selectedCounter });
     }
 
+    public Transform GetKitchenObjectFollowTransform() {
+        return kitchenObjectPoint;
+    }
+    public void SetKitchenObject(KitchenObjects kitchenObject) {
+        this.kitchenObject = kitchenObject;
+    }
+    public KitchenObjects GetKitchenObjects() {
+        return this.kitchenObject;
+    }
+    public void ClearKitchenObject() {
+        this.kitchenObject = null;
+    }
+    public bool HasKitchenObject() {
+        return kitchenObject != null;
+    }
 }
