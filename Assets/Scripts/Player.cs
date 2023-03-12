@@ -8,7 +8,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     public static Player Instance { get; private set; }
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
-        public ClearCounter selectedCounter;
+        public BaseCounter selectedCounter;
     }
     [SerializeField]
     private float speed;
@@ -24,7 +24,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     private bool isWalking;
     private Vector3 lastInteractDir;
 
-    private ClearCounter selectedCounter;
+    private BaseCounter selectedCounter;
     private KitchenObjects kitchenObject;
     private void Awake() {
         if (Instance != null)
@@ -52,9 +52,9 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         if (moveDir != Vector3.zero) { lastInteractDir = moveDir; }
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask)) {
-            raycastHit.transform.TryGetComponent(out ClearCounter clearCounter);
-            if (clearCounter != null) {
-                if (clearCounter != selectedCounter) { SetselectedCounter( clearCounter); }
+            raycastHit.transform.TryGetComponent(out BaseCounter baseCounter);
+            if (baseCounter != null) {
+                if (baseCounter != selectedCounter) { SetselectedCounter( baseCounter); }
             }
             else {
                 SetselectedCounter(null);
@@ -68,8 +68,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     private void HandleMovement() {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
-        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime);
-
+        float rotateSpeed = 7f;
+        transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
         float playerRadius = .7f;
         float playerHeight = 2f;
         float moevDistance = speed * Time.deltaTime;
@@ -93,7 +93,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         transform.position += speed * moveDir * Time.deltaTime;
         isWalking = moveDir != Vector3.zero;
     }
-    private void SetselectedCounter(ClearCounter selectedCounter) {
+    private void SetselectedCounter(BaseCounter selectedCounter) {
         this.selectedCounter = selectedCounter;
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs { selectedCounter = selectedCounter });
     }
