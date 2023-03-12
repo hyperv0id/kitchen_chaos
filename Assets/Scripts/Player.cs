@@ -25,7 +25,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     private Vector3 lastInteractDir;
 
     private BaseCounter selectedCounter;
-    private KitchenObjects kitchenObject;
+    private KitchenObject kitchenObject;
     private void Awake() {
         if (Instance != null)
             Debug.LogError("This should not happen in this single-player game");
@@ -33,6 +33,13 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     }
     private void Start() {
         gameInput.OnInteractAction += GameInput_OnInteraction;
+        gameInput.OnInteractAltAction += GameInput_OnInteractAltAction;
+    }
+
+    private void GameInput_OnInteractAltAction(object sender, EventArgs e) {
+        if (selectedCounter != null) {
+            selectedCounter.InteractAlt(this);
+        }
     }
 
     private void GameInput_OnInteraction(object sender, EventArgs e) {
@@ -101,10 +108,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     public Transform GetKitchenObjectFollowTransform() {
         return kitchenObjectPoint;
     }
-    public void SetKitchenObject(KitchenObjects kitchenObject) {
+    public void SetKitchenObject(KitchenObject kitchenObject) {
         this.kitchenObject = kitchenObject;
     }
-    public KitchenObjects GetKitchenObjects() {
+    public KitchenObject GetKitchenObject() {
         return this.kitchenObject;
     }
     public void ClearKitchenObject() {

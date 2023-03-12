@@ -1,10 +1,12 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ClearCounter : BaseCounter{
+public class CuttingCounter : BaseCounter
+{
     [SerializeField]
-    private KitchenObjectSO kitchenObjectSO;
+    private KitchenObjectSO cutKitchenObjectSO;
     public override void Interact(Player player) {
         if (!HasKitchenObject()) {
             if (player.HasKitchenObject()) {
@@ -17,6 +19,11 @@ public class ClearCounter : BaseCounter{
             }
         }
     }
-
-
+    public override void InteractAlt(Player player) {
+        if (HasKitchenObject()) {
+            // 破环原物品，生成切片后的物品
+            GetKitchenObject().DestorySelf();
+            KitchenObject.SpawnKitchenObject(cutKitchenObjectSO, this);
+        }
+    }
 }

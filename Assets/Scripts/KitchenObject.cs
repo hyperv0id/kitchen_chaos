@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KitchenObjects : MonoBehaviour
+public class KitchenObject : MonoBehaviour
 {
     [SerializeField]
     private KitchenObjectSO kitchenObjectSO;
@@ -23,4 +23,14 @@ public class KitchenObjects : MonoBehaviour
         transform.localPosition = Vector3.zero;
     }
     public IKitchenObjectParent GetKitchenObjectParent() { return this.kitchenObjectParent; }
+    public void DestorySelf() {
+        kitchenObjectParent.ClearKitchenObject();
+        Destroy(this.gameObject);
+    }
+    public static KitchenObject SpawnKitchenObject(KitchenObjectSO kitchenObjectSO, IKitchenObjectParent kitchenObjectParent) {
+        Transform koTransform = Instantiate(kitchenObjectSO.prefab);
+        KitchenObject ko = koTransform.GetComponent<KitchenObject>();
+        ko.SetKitchenObjectParent(kitchenObjectParent);
+        return ko;
+    }
 }
