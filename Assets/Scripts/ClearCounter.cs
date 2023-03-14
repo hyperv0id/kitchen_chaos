@@ -7,7 +7,7 @@ public class ClearCounter : BaseCounter{
     private KitchenObjectSO kitchenObjectSO;
     public override void Interact(Player player) {
         if (!HasKitchenObject()) {
-            if (player.HasKitchenObject()) {
+           if (player.HasKitchenObject()) {
                 player.GetKitchenObject().SetKitchenObjectParent(this);
             }
         }
