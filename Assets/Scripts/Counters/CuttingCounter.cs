@@ -4,17 +4,16 @@ using System.Collections.Generic;
 using Unity.XR.Oculus.Input;
 using UnityEngine;
 
-public class CuttingCounter : BaseCounter {
-    public event EventHandler<OnProgressChangedEventArgs>  OnProgressChanged;
-    public class OnProgressChangedEventArgs : EventArgs {
-        public float progressNormalized;   
-    }
+public class CuttingCounter : BaseCounter, IHasProgress {
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs>  OnProgressChanged;
     public event EventHandler OnCut;
 
     [SerializeField]
     private CuttingRecipeSO[] cuttingRecipeSOArray;
 
     private int cuttingProgress;
+
+
     public override void Interact(Player player) {
         if (!HasKitchenObject()) {
             if (player.HasKitchenObject()) {

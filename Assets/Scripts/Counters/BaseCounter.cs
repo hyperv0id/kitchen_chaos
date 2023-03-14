@@ -14,7 +14,7 @@ public class BaseCounter : MonoBehaviour, IKitchenObjectParent
     }
    public virtual void InteractAlt(Player player) {
         // Do nothing
-        Debug.LogError("BaseCounter.InteractAlt() was Not Implemented");
+        //Debug.LogError("BaseCounter.InteractAlt() was Not Implemented");
     }
     public Transform GetKitchenObjectFollowTransform() {
         return counterTopPoint;
