@@ -11,7 +11,7 @@ PrefabInstance:
     - target: {fileID: 629454581046178004, guid: 77426554707d351458d5b952e2170030,
         type: 3}
       propertyPath: m_RootOrder
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 629454581046178004, guid: 77426554707d351458d5b952e2170030,
         type: 3}
@@ -116,7 +116,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   counterTopPoint: {fileID: 4110159266634835073}
-  cutKitchenObjectSO: {fileID: 11400000, guid: 27ea92c51719491449dc7f42632ae085, type: 2}
+  cuttingRecipeSOArray:
+  - {fileID: 11400000, guid: 23887f2ac99c42a43863d7bc0c99158a, type: 2}
+  - {fileID: 11400000, guid: 95e7cf81bb3608742b39636d0ccd3fb8, type: 2}
+  - {fileID: 11400000, guid: 09e92cd13a6824d4495c0401a589affd, type: 2}
 --- !u!1001 &8935610773961053409
 PrefabInstance:
   m_ObjectHideFlags: 0
