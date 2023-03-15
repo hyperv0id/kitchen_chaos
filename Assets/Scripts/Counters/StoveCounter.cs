@@ -97,6 +97,17 @@ public class StoveCounter : BaseCounter,IHasProgress {
                 OnProgressChanged?.Invoke(this, new() { progressNormalized = fryingTimer / fryingRecipeSO.fryingTimerMax });
                 OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
             }
+            else if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKO)) {
+                // 玩家拿的是一个盘子
+                if (plateKO.TryAddIngrediant(GetKitchenObject().GetKitchenObjectSO())) {
+                    GetKitchenObject().DestorySelf();
+                    // 重置状态机
+                    state = State.Idle;
+                    fryingTimer = 0f;
+                    OnProgressChanged?.Invoke(this, new() { progressNormalized = fryingTimer / fryingRecipeSO.fryingTimerMax });
+                    OnStateChanged?.Invoke(this, new OnStateChangedEventArgs { state = state });
+                }
+            }
         }
 
     }

@@ -30,6 +30,12 @@ public class CuttingCounter : BaseCounter, IHasProgress {
             if (!player.HasKitchenObject()) {
                 this.GetKitchenObject().SetKitchenObjectParent(player);
             }
+            else if (player.GetKitchenObject().TryGetPlate(out PlateKitchenObject plateKO)) {
+                // 玩家拿的是一个盘子
+                if (plateKO.TryAddIngrediant(GetKitchenObject().GetKitchenObjectSO())) {
+                    GetKitchenObject().DestorySelf();
+                }
+            }
         }
     }
     public override void InteractAlt(Player player) {
