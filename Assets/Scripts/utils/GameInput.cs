@@ -29,4 +29,8 @@ public class GameInput : MonoBehaviour
         inputVector = inputVector.normalized;
         return inputVector;
     }
+    public Vector3 GetMoveV3() {
+        Vector2 moveV2 = GetMovementVectorNormalized();
+        return new Vector3(moveV2.x, 0f, moveV2.y);
+    }
 }

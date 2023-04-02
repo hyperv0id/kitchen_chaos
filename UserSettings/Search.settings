@@ -7,7 +7,7 @@ onBoardingDoNotAskAgain = true
 showPackageIndexes = false
 showStatusBar = false
 scopes = {
-	"last_search.310DEAF1" = "plate comp"
+	"last_search.310DEAF1" = "examplecam"
 	"OpenInspectorPreview.310DEAF1" = "0"
 	"currentGroup.310DEAF1" = "all"
 }
@@ -56,6 +56,8 @@ providers = {
 objectSelectors = {
 }
 recentSearches = [
+	"example"
+	""
 	"pl"
 	"p"
 	"s"
@@ -63,7 +65,6 @@ recentSearches = [
 	"m"
 	"tra"
 	"trash vis"
-	""
 	"c slice vis"
 	"c"
 	"tom"

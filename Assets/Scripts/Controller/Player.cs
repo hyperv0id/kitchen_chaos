@@ -3,7 +3,23 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+struct InputConstants
+{
+    public const string MouseXInput = "Mouse X";
+    public const string MouseYInput = "Mouse Y";
+    public const string MouseScrollInput = "Mouse ScrollWheel";
+    public const string HorizontalInput = "Horizontal";
+    public const string VerticalInput = "Vertical";
+}
+
 public class Player : MonoBehaviour, IKitchenObjectParent {
+
+    [SerializeField]
+    private KinematicCharacterController.Examples.ExampleCharacterCamera OrbitCamera; // 主相机
+    [SerializeField]
+    private Transform CameraFollowPoint; // 相机看向哪里
+    [SerializeField]
+    private PlayerKCC kccCharacter; // 使用kcc组件控制角色运动
 
     public static Player Instance { get; private set; }
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
@@ -32,6 +48,14 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         Instance = this;
     }
     private void Start() {
+            Cursor.lockState = CursorLockMode.Locked;
+
+            // Tell camera to follow transform
+            OrbitCamera.SetFollowTransform(CameraFollowPoint);
+
+            // Ignore the character's collider(s) for camera obstruction checks
+            OrbitCamera.IgnoredColliders.Clear();
+            OrbitCamera.IgnoredColliders.AddRange(kccCharacter.GetComponentsInChildren<Collider>());
         gameInput.OnInteractAction += GameInput_OnInteraction;
         gameInput.OnInteractAltAction += GameInput_OnInteractAltAction;
     }
@@ -44,18 +68,70 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
     private void GameInput_OnInteraction(object sender, EventArgs e) {
         if(selectedCounter != null) {
+            Debug.Log(selectedCounter + "should interact");
             selectedCounter.Interact(this);
         }
     }
 
     void Update() {
+        if (Input.GetMouseButtonDown(0))
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+        HandlePlayerInputs();
         HandleInteractions();
-        HandleMovement();
+        // HandleMovement();
+    }
+
+    private void HandlePlayerInputs(){
+        KCCInput characterInputs = new();
+
+        // Build the CharacterInputs struct
+        characterInputs.moveInput = gameInput.GetMoveV3();
+
+        isWalking = characterInputs.moveInput != Vector3.zero;
+
+        characterInputs.CameraRotation = OrbitCamera.Transform.rotation;
+
+        // Apply inputs to character
+        kccCharacter.SetInput(ref characterInputs);
+    }
+
+    // 更新UI or 视觉
+    private void LateUpdate()
+    {
+        HandleCameraInput();
+    }
+
+    // 处理相机
+    private void HandleCameraInput()
+    {
+        // Create the look input vector for the camera
+        float mouseLookAxisUp = Input.GetAxisRaw(InputConstants.MouseYInput);
+        float mouseLookAxisRight = Input.GetAxisRaw(InputConstants.MouseXInput);
+        Vector3 lookInputVector = new Vector3(mouseLookAxisRight, mouseLookAxisUp, 0f);
+
+        // Prevent moving the camera while the cursor isn't locked
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            lookInputVector = Vector3.zero;
+        }
+
+        // Input for zooming the camera (disabled in WebGL because it can cause problems)
+        float scrollInput = -Input.GetAxis(InputConstants.MouseScrollInput);
+
+        // Apply inputs to the camera
+        OrbitCamera.UpdateWithInput(Time.deltaTime, scrollInput, lookInputVector);
+
+        // Handle toggling zoom level
+        if (Input.GetMouseButtonDown(1))
+        {
+            OrbitCamera.TargetDistance = (OrbitCamera.TargetDistance == 0f) ? OrbitCamera.DefaultDistance : 0f;
+        }
     }
     public bool IsWalking() { return isWalking; }
     private void HandleInteractions() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+        Vector3 moveDir = gameInput.GetMoveV3();
         if (moveDir != Vector3.zero) { lastInteractDir = moveDir; }
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask)) {
@@ -73,8 +149,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         //SetselectedCounter(selectedCounter);
     }
     private void HandleMovement() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+        Vector3 moveDir = gameInput.GetMoveV3();
         float rotateSpeed = 7f;
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
         float playerRadius = .7f;
@@ -102,6 +177,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     }
     private void SelectCounter(BaseCounter selectedCounter) {
         this.selectedCounter = selectedCounter;
+        if(selectedCounter)
+            Debug.Log(selectedCounter + "is Selected");
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs { selectedCounter = selectedCounter });
     }
 
