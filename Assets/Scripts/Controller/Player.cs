@@ -61,14 +61,14 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask)) {
             raycastHit.transform.TryGetComponent(out BaseCounter baseCounter);
             if (baseCounter != null) {
-                if (baseCounter != selectedCounter) { SetselectedCounter( baseCounter); }
+                if (baseCounter != selectedCounter) { SelectCounter( baseCounter); }
             }
             else {
-                SetselectedCounter(null);
+                SelectCounter(null);
             }
         }
         else {
-            SetselectedCounter(null);
+            SelectCounter(null);
         }
         //SetselectedCounter(selectedCounter);
     }
@@ -100,7 +100,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         transform.position += speed * moveDir * Time.deltaTime;
         isWalking = moveDir != Vector3.zero;
     }
-    private void SetselectedCounter(BaseCounter selectedCounter) {
+    private void SelectCounter(BaseCounter selectedCounter) {
         this.selectedCounter = selectedCounter;
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs { selectedCounter = selectedCounter });
     }
