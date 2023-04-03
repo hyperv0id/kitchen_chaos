@@ -38,7 +38,6 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
 
     private bool isWalking;
-    private Vector3 lastInteractDir;
 
     private BaseCounter selectedCounter;
     private KitchenObject kitchenObject;
@@ -68,7 +67,6 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
     private void GameInput_OnInteraction(object sender, EventArgs e) {
         if(selectedCounter != null) {
-            Debug.Log(selectedCounter + "should interact");
             selectedCounter.Interact(this);
         }
     }
@@ -131,10 +129,8 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     }
     public bool IsWalking() { return isWalking; }
     private void HandleInteractions() {
-        Vector3 moveDir = gameInput.GetMoveV3();
-        if (moveDir != Vector3.zero) { lastInteractDir = moveDir; }
         float interactDistance = 2f;
-        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, counterLayerMask)) {
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit raycastHit, interactDistance, counterLayerMask)) {
             raycastHit.transform.TryGetComponent(out BaseCounter baseCounter);
             if (baseCounter != null) {
                 if (baseCounter != selectedCounter) { SelectCounter( baseCounter); }
